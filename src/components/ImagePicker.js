@@ -3,6 +3,7 @@ import { Image, View } from "react-native";
 import { Button } from "./commons/Button";
 import { ImagePicker, Camera, Permissions } from "expo";
 import { Card, CardSection } from "./commons";
+import firebase from 'firebase';
 
 export default class ImagePickerExample extends React.Component {
   state = {
@@ -28,7 +29,35 @@ export default class ImagePickerExample extends React.Component {
       this.setState({ image: pickerResult.uri });
     }
   };
+  _pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3]
+    });
 
+    console.log(result);
+
+    if (!result.cancelled) {
+      this.setState({ image: result.uri });
+    }
+  };
+
+  saveImage() {
+    var user = firebase.auth().currentUser;
+    if (user != null) {
+      var { name, email, photoUrl, uid, emailVerified } = user;
+    }
+    console.log(user);
+
+    var storageRef = firebase.storage().ref(uid);
+    // Create a reference to 'mountains.jpg'
+    var mountainsRef = storageRef.child(name);
+    // Create a reference to 'images/mountains.jpg'
+    var mountainImagesRef = storageRef.child("images/mountains.jpg");
+    // While the file names are the same, the references point to different files
+    mountainsRef.name === mountainImagesRef.name; // true
+    mountainsRef.fullPath === mountainImagesRef.fullPath; // false
+  }
   render() {
     let { image, hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
@@ -58,24 +87,11 @@ export default class ImagePickerExample extends React.Component {
           )}
           {image ? (
             <CardSection>
-              <Button title="Save" onPress={() => console.log("pressed")} />
+              <Button title="Save" onPress={() => this.saveImage()} />
             </CardSection>
           ) : null}
         </Card>
       );
     }
   }
-
-  _pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3]
-    });
-
-    console.log(result);
-
-    if (!result.cancelled) {
-      this.setState({ image: result.uri });
-    }
-  };
 }
