@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import firebase from 'firebase';
 import { Button, Card, CardSection, Input, Spinner } from '../components/commons';
 
-class LoginScreen extends Component {
+export default  class LoginScreen extends Component {
   state = { email: '', password: '', error: '', loading: false };
 
   onButtonPress() {
@@ -87,4 +87,3 @@ const styles = {
   }
 };
 
-export default LoginScreen;

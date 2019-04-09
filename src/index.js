@@ -1,9 +1,11 @@
 import React, { Component } from "react";
 import { Button, ThemeProvider } from "react-native-elements";
-
+import {View} from 'react-native';
 import firebase from "./config/fbConfig";
 import LoginScreen from "./screen/LoginScreen";
-// import ImagePicker from "./components/ImagePicker";
+import ImagePicker from "./components/ImagePicker";
+import ImageUpload from '../src/screen/ImageUpload';
+import { Spinner, Header } from "./components/commons/index";
 
 const theme = {
   Button: {
@@ -23,10 +25,23 @@ export default class index extends Component {
       }
     });
   }
+  renderContent() {
+    switch (this.state.loggedIn) {
+      case true:
+        return <ImagePicker />;
+      case false:
+        return <LoginScreen />;
+      default:
+        return <Spinner size="large" />;
+    }
+  }
   render() {
     return (
       <ThemeProvider theme={theme}>
-        <LoginScreen />
+        <View>
+          <Header headerText="Authentication" />
+          {this.renderContent()}
+        </View>
       </ThemeProvider>
     );
   }

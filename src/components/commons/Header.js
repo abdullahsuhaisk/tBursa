@@ -29,3 +29,4 @@ const styles = {
     fontSize: 20
   }
 };
+export { Header };
