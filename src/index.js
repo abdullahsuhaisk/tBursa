@@ -4,7 +4,6 @@ import {View} from 'react-native';
 import firebase from "./config/fbConfig";
 import LoginScreen from "./screen/LoginScreen";
 import ImagePicker from "./components/ImagePicker";
-import ImageUpload from '../src/screen/ImageUpload';
 import { Spinner, Header } from "./components/commons/index";
 
 const theme = {

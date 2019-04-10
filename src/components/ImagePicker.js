@@ -1,9 +1,9 @@
 import React from "react";
-import { Image, View } from "react-native";
+import { Image, View, Alert } from "react-native";
 import { Button } from "./commons/Button";
 import { ImagePicker, Camera, Permissions } from "expo";
 import { Card, CardSection } from "./commons";
-import firebase from 'firebase';
+import firebase from "firebase";
 
 export default class ImagePickerExample extends React.Component {
   state = {
@@ -27,6 +27,9 @@ export default class ImagePickerExample extends React.Component {
 
     if (!pickerResult.cancelled) {
       this.setState({ image: pickerResult.uri });
+      this.uploadImage(pickerResult.uri)
+        .then(() => Alert.alert("Resim eklendi"))
+        .catch(error => Alert.alert(error));
     }
   };
   _pickImage = async () => {
@@ -35,29 +38,42 @@ export default class ImagePickerExample extends React.Component {
       aspect: [4, 3]
     });
 
-    console.log(result);
+    //console.log(result);
 
     if (!result.cancelled) {
       this.setState({ image: result.uri });
+      this.uploadImage(result.uri)
+        .then(() => Alert.alert("Resim eklendi"))
+        .catch(error => Alert.alert(error));
     }
   };
 
-  saveImage() {
+  uploadImage = async (uri) => {
     var user = firebase.auth().currentUser;
     if (user != null) {
-      var { name, email, photoUrl, uid, emailVerified } = user;
+      var { uid } = user;
     }
-    console.log(user);
+    const blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function() {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function(e) {
+        console.log(e);
+        reject(new TypeError('Network request failed'));
+      };
+      xhr.responseType = 'blob';
+      xhr.open('GET', uri, true);
+      xhr.send(null);
+    });
+    console.log(blob);
+    var ref = firebase
+      .storage()
+      .ref(`${uid}`)
+      .child("images/" + `${uid}`);
+    return ref.put(blob,{ contentType : 'image/png' });
+  };
 
-    var storageRef = firebase.storage().ref(uid);
-    // Create a reference to 'mountains.jpg'
-    var mountainsRef = storageRef.child(name);
-    // Create a reference to 'images/mountains.jpg'
-    var mountainImagesRef = storageRef.child("images/mountains.jpg");
-    // While the file names are the same, the references point to different files
-    mountainsRef.name === mountainImagesRef.name; // true
-    mountainsRef.fullPath === mountainImagesRef.fullPath; // false
-  }
   render() {
     let { image, hasCameraPermission } = this.state;
     if (hasCameraPermission === null) {
@@ -87,7 +103,7 @@ export default class ImagePickerExample extends React.Component {
           )}
           {image ? (
             <CardSection>
-              <Button title="Save" onPress={() => this.saveImage()} />
+              <Button title="Save" onPress={() => firebase.auth().signOut()} />
             </CardSection>
           ) : null}
         </Card>
