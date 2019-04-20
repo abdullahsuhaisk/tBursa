@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
 import firebase from 'firebase';
-import { Button, Card, CardSection, Input, Spinner } from '../components/commons';
+import { Button, Card, CardSection, Input, Spinner,Header } from '../components/commons';
 
 export default  class LoginScreen extends Component {
   state = { email: '', password: '', error: '', loading: false };
@@ -47,6 +47,8 @@ export default  class LoginScreen extends Component {
 
   render() {
     return (
+      <>
+      <Header headerText="Authentication" />
       <Card>
         <CardSection>
           <Input
@@ -75,6 +77,7 @@ export default  class LoginScreen extends Component {
           {this.renderButton()}
         </CardSection>
       </Card>
+      </>
     );
   }
 }

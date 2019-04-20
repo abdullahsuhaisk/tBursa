@@ -2,7 +2,7 @@ import React from "react";
 import { Image, View, Alert } from "react-native";
 import { Button } from "./commons/Button";
 import { ImagePicker, Camera, Permissions } from "expo";
-import { Card, CardSection } from "./commons";
+import { Card, CardSection, Header } from "./commons";
 import firebase from "firebase";
 
 export default class ImagePickerExample extends React.Component {
@@ -48,7 +48,7 @@ export default class ImagePickerExample extends React.Component {
     }
   };
 
-  uploadImage = async (uri) => {
+  uploadImage = async uri => {
     var user = firebase.auth().currentUser;
     if (user != null) {
       var { uid } = user;
@@ -60,18 +60,18 @@ export default class ImagePickerExample extends React.Component {
       };
       xhr.onerror = function(e) {
         console.log(e);
-        reject(new TypeError('Network request failed'));
+        reject(new TypeError("Network request failed"));
       };
-      xhr.responseType = 'blob';
-      xhr.open('GET', uri, true);
+      xhr.responseType = "blob";
+      xhr.open("GET", uri, true);
       xhr.send(null);
     });
     console.log(blob);
     var ref = firebase
       .storage()
       .ref(`${uid}`)
-      .child("images/" + `${uid}`);
-    return ref.put(blob,{ contentType : 'image/png' });
+      .child("images/");
+    return ref.put(blob, { contentType: "image/png" });
   };
 
   render() {
@@ -82,31 +82,33 @@ export default class ImagePickerExample extends React.Component {
       return <Text>No access to camera</Text>;
     } else {
       return (
+        <>
+        <Header headerText="Fiş Yükle"/>
         <Card>
           <CardSection>
-            <Button
-              title="Pick an image from camera roll"
-              onPress={this._pickImage}
-            />
+            <Button onPress={this._pickImage}>
+             Galeriden Resim Seç
+            </Button>
           </CardSection>
           <CardSection>
-            <Button title="Take a phote" onPress={this._takePhoto} />
+            <Button onPress={this._takePhoto}>Resim Çek</Button>
           </CardSection>
           {image && (
             <CardSection>
               <Image
                 source={{ uri: image }}
-                style={{ width: 200, height: 200 }}
+                style={{ width: 300, height: 300 }}
                 onPress={() => console.log("pressed")}
               />
             </CardSection>
           )}
           {image ? (
             <CardSection>
-              <Button title="Save" onPress={() => firebase.auth().signOut()} />
+              <Button onPress={() => firebase.auth().signOut()}>Çıkış Yap !</Button>
             </CardSection>
           ) : null}
         </Card>
+        </>
       );
     }
   }

@@ -4,7 +4,7 @@ import {View} from 'react-native';
 import firebase from "./config/fbConfig";
 import LoginScreen from "./screen/LoginScreen";
 import ImagePicker from "./components/ImagePicker";
-import { Spinner, Header } from "./components/commons/index";
+import { Spinner } from "./components/commons/index";
 
 const theme = {
   Button: {
@@ -38,7 +38,6 @@ export default class index extends Component {
     return (
       <ThemeProvider theme={theme}>
         <View>
-          <Header headerText="Authentication" />
           {this.renderContent()}
         </View>
       </ThemeProvider>
