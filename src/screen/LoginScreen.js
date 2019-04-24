@@ -1,43 +1,26 @@
 import React, { Component } from 'react';
 import { Text } from 'react-native';
-import firebase from 'firebase';
+import { connect } from 'react-redux';
 import { Button, Card, CardSection, Input, Spinner,Header } from '../components/commons';
+import { emailChanged, passwordChanged, loginUser } from '../redux/actions';
+class LoginScreen extends Component {
+  onEmailChange(text) {
+    this.props.emailChanged(text);
+  }
 
-export default  class LoginScreen extends Component {
-  state = { email: '', password: '', error: '', loading: false };
+  onPasswordChange(text) {
+    this.props.passwordChanged(text);
+  }
 
   onButtonPress() {
-    const { email, password } = this.state;
-
-    this.setState({ error: '', loading: true });
-
-    firebase.auth().signInWithEmailAndPassword(email, password)
-      .then(this.onLoginSuccess.bind(this))
-      .catch(() => {
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-          .then(this.onLoginSuccess.bind(this))
-          .catch(this.onLoginFail.bind(this));
-      });
-  }
-
-  onLoginFail() {
-    this.setState({ error: 'Authentication Failed', loading: false });
-  }
-
-  onLoginSuccess() {
-    this.setState({
-      email: '',
-      password: '',
-      loading: false,
-      error: ''
-    });
+    const {email,password} = this.props;
+    this.props.loginUser({email,password});
   }
 
   renderButton() {
-    if (this.state.loading) {
+    if (this.props.loading) {
       return <Spinner size="small" />;
     }
-
     return (
       <Button onPress={this.onButtonPress.bind(this)}>
         Log in
@@ -46,6 +29,7 @@ export default  class LoginScreen extends Component {
   }
 
   render() {
+  console.log(this.props)
     return (
       <>
       <Header headerText="Authentication" />
@@ -54,8 +38,8 @@ export default  class LoginScreen extends Component {
           <Input
             placeholder="user@gmail.com"
             label="Email"
-            value={this.state.email}
-            onChangeText={email => this.setState({ email })}
+            value={this.props.email}
+            onChangeText={this.onEmailChange.bind(this)}
           />
         </CardSection>
 
@@ -64,13 +48,13 @@ export default  class LoginScreen extends Component {
             secureTextEntry
             placeholder="password"
             label="Password"
-            value={this.state.password}
-            onChangeText={password => this.setState({ password })}
+            value={this.props.password}
+            onChangeText={password => this.props.passwordChanged({ password })}
           />
         </CardSection>
 
         <Text style={styles.errorTextStyle}>
-          {this.state.error}
+          {this.props.error}
         </Text>
 
         <CardSection>
@@ -90,3 +74,11 @@ const styles = {
   }
 };
 
+function mapStateToProps({auth}) {
+  const{email,password,error,loading} =auth;
+  return { email, password,error,loading};
+}
+
+export default connect(mapStateToProps,{
+  emailChanged, passwordChanged, loginUser
+})(LoginScreen)

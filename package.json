@@ -14,7 +14,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
     "react-native-elements": "^1.1.0",
     "react-native-image-picker": "^0.28.1",
-    "react-redux": "^7.0.2",
+    "react-redux": "v.6.0.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "uuid": "^3.3.2"

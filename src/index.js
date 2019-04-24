@@ -1,31 +1,31 @@
 import React, { Component } from "react";
 import { Button, ThemeProvider } from "react-native-elements";
-import {View} from 'react-native';
+import { View } from "react-native";
+import { connect } from "react-redux";
 import firebase from "./config/fbConfig";
 import LoginScreen from "./screen/LoginScreen";
 import ImagePicker from "./components/ImagePicker";
 import { Spinner } from "./components/commons/index";
+import { loginStatusLogin, loginStatusLogoff } from "./redux/actions";
 
 const theme = {
   Button: {
     raised: true
   }
 };
-
-export default class index extends Component {
-  state = { loggedIn: null };
-
+class index extends Component {
+  //  state = { loggedIn: null };
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.setState({ loggedIn: true });
+        this.props.loginStatusLogin();
       } else {
-        this.setState({ loggedIn: false });
+        this.props.loginStatusLogoff();
       }
     });
   }
   renderContent() {
-    switch (this.state.loggedIn) {
+    switch (this.state.auth.loginStatus) {
       case true:
         return <ImagePicker />;
       case false:
@@ -35,12 +35,23 @@ export default class index extends Component {
     }
   }
   render() {
+    console.log(this.props);
+    console.log(this.state);
+
     return (
       <ThemeProvider theme={theme}>
-        <View>
-          {this.renderContent()}
-        </View>
+        <View>{this.renderContent()}</View>
       </ThemeProvider>
     );
   }
 }
+
+function mapStateToProps({ state }) {
+  const { auth } = state.auth;
+  return auth;
+}
+
+export default connect(
+  mapStateToProps,
+  { loginStatusLogin, loginStatusLogoff }
+)(index);
