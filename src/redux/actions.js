@@ -32,21 +32,33 @@ export const passwordChanged = text => {
 // Forms
 
 // Auth
-export const loginUser = ({ email, password }) => {
+export const loginUser = (email, password) => {
+  // console.log(email);
+  // console.log(password);
+
   return dispatch => {
     dispatch({ type: LOGIN_USER });
     // go tbursa
     axios
-      .get(URL + "get_user.php?", {
-        params: {
-          DBDataEposta: email,
-          DBDataSifre: password,
-          DBAnaBranch: "hmtr",
-          DBAnaLangKod: "tr"
+      .get(
+        URL + "get_user.php?",
+        {
+          params: {
+            DBDataEposta: email,
+            DBDataSifre: password,
+            DBAnaBranch: "hmtr",
+            DBAnaLangKod: "tr",
+            callback:'abc'
+          }
         }
-      })
-      .then(() => {
-        firebase
+      )
+      .then(res => {
+         debugger
+         const {data} = res
+         eval(data);
+         function abc(params) {
+           debugger
+          firebase
           .auth()
           .signInWithEmailAndPassword(email, password)
           .then(user => loginUserSuccess(dispatch, user))
@@ -57,9 +69,30 @@ export const loginUser = ({ email, password }) => {
               .then(user => loginUserSuccess(dispatch, user))
               .catch(err => loginUserFail(dispatch, err));
           });
+         }
+         //console.log(res);
+       
       })
       .catch(error => {
+        debugger
+         //console.log(error)
         loginUserFail(dispatch, error);
+      });
+  };
+};
+export const loginUser1 = (email, password) => {
+  return dispatch => {
+    dispatch({ type: LOGIN_USER });
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(user => loginUserSuccess(dispatch, user))
+      .catch(() => {
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(user => loginUserSuccess(dispatch, user))
+          .catch(err => loginUserFail(dispatch, err));
       });
   };
 };
@@ -79,13 +112,13 @@ const loginUserSuccess = (dispatch, user) => {
 };
 
 export const loginStatusLogin = () => {
-    return({
-        type:LOGIN_STATUS_LOGIN
-    })
-}
+  return {
+    type: LOGIN_STATUS_LOGIN
+  };
+};
 export const loginStatusLogoff = () => {
-    return({
-        type:LOGIN_STATUS_LOGOFF
-    })
-}
+  return {
+    type: LOGIN_STATUS_LOGOFF
+  };
+};
 // Auth

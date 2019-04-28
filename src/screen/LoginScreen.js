@@ -14,7 +14,7 @@ class LoginScreen extends Component {
 
   onButtonPress() {
     const {email,password} = this.props;
-    this.props.loginUser({email,password});
+    this.props.loginUser(email,password);
   }
 
   renderButton() {
@@ -49,7 +49,7 @@ class LoginScreen extends Component {
             placeholder="password"
             label="Password"
             value={this.props.password}
-            onChangeText={password => this.props.passwordChanged({ password })}
+            onChangeText={password => this.props.passwordChanged(password)}
           />
         </CardSection>
 

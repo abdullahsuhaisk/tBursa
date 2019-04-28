@@ -14,18 +14,19 @@ const theme = {
   }
 };
 class index extends Component {
-  //  state = { loggedIn: null };
+  state = { loggedIn: null };
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        this.props.loginStatusLogin();
+        this.setState({ loggedIn: true });
       } else {
-        this.props.loginStatusLogoff();
+        this.setState({ loggedIn: false });
       }
     });
   }
   renderContent() {
-    switch (this.state.auth.loginStatus) {
+    console.log(this.props)
+    switch (this.state.loggedIn) {
       case true:
         return <ImagePicker />;
       case false:
@@ -35,9 +36,6 @@ class index extends Component {
     }
   }
   render() {
-    console.log(this.props);
-    console.log(this.state);
-
     return (
       <ThemeProvider theme={theme}>
         <View>{this.renderContent()}</View>
@@ -46,8 +44,8 @@ class index extends Component {
   }
 }
 
-function mapStateToProps({ state }) {
-  const { auth } = state.auth;
+function mapStateToProps( state ) {
+  const { auth } = state;
   return auth;
 }
 

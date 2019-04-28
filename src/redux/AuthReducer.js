@@ -9,15 +9,16 @@ import {
   } from './types';
   
   const INITIAL_STATE = {
-    email: '',
-    password: '',
+    email: 'destek@teknobursa.com',
+    password: 'BursaTekno77',
     user: null,
     error: '',
     loading: false,
-    loginStatus:null
+    loginStatus:false
   };
   
   export default (state = INITIAL_STATE, action) => {
+    console.log(action.type);
     switch (action.type) {
       case EMAIL_CHANGED:
         return { ...state, email: action.payload };
@@ -28,7 +29,7 @@ import {
       case LOGIN_USER_SUCCESS:
         return { ...state, ...INITIAL_STATE, user: action.payload };
       case LOGIN_USER_FAIL:
-        return { ...state, error: 'Authentication Failed.', password: '', loading: false };
+        return { ...state, error: 'Authentication Failed.', loading: false };
       case LOGIN_STATUS_LOGIN:
         return {...state,loginStatus:true};
       case LOGIN_STATUS_LOGOFF:
